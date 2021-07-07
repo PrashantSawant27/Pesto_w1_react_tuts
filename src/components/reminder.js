@@ -10,7 +10,7 @@ export default class Reminder extends React.Component {
                         <Row>
                             <Col md="auto" className="p-4" >
                                 <img className="reminderLogo"
-                                src="../reminder.png" />
+                                src="../reminder.png" alt="text"/>
                             </Col>
                             <Col className="text-left">
                                 <h3>{this.props.title}</h3>
