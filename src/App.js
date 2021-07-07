@@ -1,14 +1,14 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Tabs,Tab,Card,Button,Row, Col } from 'react-bootstrap';
+// import ReactDOM from 'react-dom';
+import { Card,Button,Row, Col } from 'react-bootstrap';
 import Reminder from './components/reminder.js';
 import  {getReminders,setReminders} from './StorageHelper';
-import TimePicker from 'react-gradient-timepicker'; // or
+// import TimePicker from 'react-gradient-timepicker'; // or
 // var TimePicker = require('react-gradient-timepicker');
 
-import Timekeeper from 'react-timekeeper';
+// import Timekeeper from 'react-timekeeper';
 
 export class App extends React.Component {
   
@@ -41,10 +41,10 @@ export class App extends React.Component {
           <Card.Body>
           <Row>
           <Col>
-            <input className="form-control" ref={title => (this.state.title = title)} placeholder="What do you want to remember"></input>
+            <input className="form-control" ref={title => {this.setState({title: title.value}) }} placeholder="What do you want to remember"></input>
           </Col>
           <Col>
-          <input className="form-control" ref={dateTime => (this.state.dateTime = dateTime)} placeholder="Time in hh:mm:ss"></input>
+          <input className="form-control" ref={dateTime => {this.setState({dateTime: dateTime.value})}} placeholder="Time in hh:mm:ss"></input>
           
           </Col>
           <Col md="auto">
@@ -53,7 +53,7 @@ export class App extends React.Component {
           </Row>
           </Card.Body>
         </Card>
-        {this.state.reminders.length==0?
+        {this.state.reminders.length===0?
             "No reminders"
             :
             this.state.reminders.map((item)=>{
@@ -84,8 +84,8 @@ export class App extends React.Component {
       
       this.setState({reminders:reminders});
       setReminders(this.state.reminders);
-      this.state.title.value="";
-      this.state.dateTime.value="";
+      // this.state.title.value="";
+      // this.state.dateTime.value="";
   }
   
 }

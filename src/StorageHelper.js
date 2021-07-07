@@ -6,7 +6,7 @@ export function setReminders(reminders){
 
 export function getReminders(){
     const reminders=localStorage.getItem('reminders');
-    return (reminders!=null && reminders!=undefined)? JSON.parse(reminders):[];
+    return (reminders!==null)? JSON.parse(reminders):[];
 };
 export function functiondeleteAllReminders(params) {
     localStorage.removeItem('reminders');
