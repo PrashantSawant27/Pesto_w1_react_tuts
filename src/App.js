@@ -16,7 +16,9 @@ export class App extends React.Component {
     super(props);
     this.state={ reminders:[],title:"",dateTime:""};
     this.addReminder=this.addReminder.bind(this);
-    this.onChange=this.onChange.bind(this);
+    this.setDateTime=this.setDateTime.bind(this);
+    this.setTitle=this.setTitle.bind(this);
+
 
   }
   componentDidMount(){
@@ -41,10 +43,10 @@ export class App extends React.Component {
           <Card.Body>
           <Row>
           <Col>
-            <input className="form-control" value="" ref={title => {this.setState({title: title}) }} placeholder="What do you want to remember"></input>
+            <input className="form-control" value={this.state.title} onChange={this.setTitle} placeholder="What do you want to remember"></input>
           </Col>
           <Col>
-          <input className="form-control" value="" ref={dateTime => {this.setState({dateTime: dateTime})}} placeholder="Time in hh:mm:ss"></input>
+          <input className="form-control" value={this.state.dateTime} onChange={this.setDateTime} placeholder="Time in hh:mm:ss"></input>
           
           </Col>
           <Col md="auto">
@@ -68,9 +70,13 @@ export class App extends React.Component {
 
     
   }
-  onChange(val){
+  setTitle(val){
     console.log(val);
-    this.setState({dateTime:val.toString()});
+    this.setState({title:val.target.value});
+  }
+  setDateTime(val){
+    console.log(val);
+    this.setState({dateTime:val.target.value});
   }
 
   addReminder(){
