@@ -82,8 +82,8 @@ export class App extends React.Component {
   addReminder(){
       const reminder={
                     reminder_id:this.state.reminders.length+1,
-                    title:this.state.title!=null?this.state.title.value:"",
-                    dateTime:this.state.dateTime!=null?this.state.dateTime.value:""
+                    title:this.state.title!=null?this.state.title:"",
+                    dateTime:this.state.dateTime!=null?this.state.dateTime:""
                   };
       const reminders=this.state.reminders;
       reminders.push(reminder);
