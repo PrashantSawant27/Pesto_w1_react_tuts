@@ -41,10 +41,10 @@ export class App extends React.Component {
           <Card.Body>
           <Row>
           <Col>
-            <input className="form-control" ref={title => {this.setState({title: title.value}) }} placeholder="What do you want to remember"></input>
+            <input className="form-control" value="" ref={title => {this.setState({title: title.value}) }} placeholder="What do you want to remember"></input>
           </Col>
           <Col>
-          <input className="form-control" ref={dateTime => {this.setState({dateTime: dateTime.value})}} placeholder="Time in hh:mm:ss"></input>
+          <input className="form-control" value="" ref={dateTime => {this.setState({dateTime: dateTime.value})}} placeholder="Time in hh:mm:ss"></input>
           
           </Col>
           <Col md="auto">
