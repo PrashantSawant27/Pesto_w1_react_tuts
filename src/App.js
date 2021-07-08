@@ -1,25 +1,28 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+import 'react-toastify/dist/ReactToastify.css';
 import React from 'react';
 // import ReactDOM from 'react-dom';
-import { Card,Button,Row, Col } from 'react-bootstrap';
+import { Card,Row, Col } from 'react-bootstrap';
+import Button from '@material-ui/core/Button';
 import Reminder from './components/reminder.js';
 import  {getReminders,setReminders} from './StorageHelper';
-// import TimePicker from 'react-gradient-timepicker'; // or
-// var TimePicker = require('react-gradient-timepicker');
 
-// import Timekeeper from 'react-timekeeper';
-
+import AdapterDateFns from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import TimePicker from '@material-ui/lab/TimePicker';
+import Stack from '@material-ui/core/Stack';
+import TextField from '@material-ui/core/TextField';
+import { toast,ToastContainer } from 'react-toastify';
 export class App extends React.Component {
   
   constructor(props) {
     super(props);
-    this.state={ reminders:[],title:"",dateTime:""};
+    this.state={ reminders:[],title:"",dateTime:new Date(),openSnack:false};
     this.addReminder=this.addReminder.bind(this);
     this.setDateTime=this.setDateTime.bind(this);
     this.setTitle=this.setTitle.bind(this);
-
-
   }
   componentDidMount(){
     document.title = "Reminder App";
@@ -28,10 +31,6 @@ export class App extends React.Component {
 
   setRemindersFromStorage(){
     this.setState({reminders:getReminders()});
-    // const upcoming =reminders.filter(ele =>{ return ele.dateTime>=new Date()});
-    // this.setState({upcoming: upcoming});
-    // const completed=reminders.filter(ele =>{ return ele.dateTime<=new Date()});
-    // this.setState({completed: completed});
   }
   render() {
     return (
@@ -42,15 +41,43 @@ export class App extends React.Component {
         <Card>
           <Card.Body>
           <Row>
-          <Col>
-            <input className="form-control" value={this.state.title} onChange={this.setTitle} placeholder="What do you want to remember"></input>
+          <Col md="5" xs="12" sm="12" >
+          <Stack spacing={2} className="mt-2 mb-2">
+          <TextField id="outlined-basic" label="What do you want to remember" variant="outlined" value={this.state.title} onChange={this.setTitle} />
+          </Stack>
           </Col>
-          <Col>
-          <input className="form-control" value={this.state.dateTime} onChange={this.setDateTime} placeholder="Time in hh:mm:ss"></input>
-          
+          <Col md="5" xs="12" sm="12" >
+            {/* <input className="form-control" value={this.state.dateTime} onChange={this.setDateTime} placeholder="HH"></input>
+            <input className="form-control" value={this.state.dateTime} onChange={this.setDateTime} placeholder="MM"></input>
+            <input className="form-control" value={this.state.dateTime} onChange={this.setDateTime} placeholder="SS"></input>
+            <select className="form-control">
+              <option>AM</option>
+              <option>PM</option>
+            </select> */}
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <Stack spacing={2} className="mt-2 mb-2">
+                <TimePicker
+                            ampm={true}
+                            openTo="hours"
+                            views={['hours', 'minutes', 'seconds']}
+                            inputFormat="HH:mm:ss"
+                            mask="__:__:__"
+                            label="Enter Time With seconds"
+                            value={this.state.dateTime}
+                            onChange={(newValue) => {
+                              this.setState({dateTime:newValue});
+                            }}
+                            renderInput={(params) => <TextField {...params} />}
+                  />
+                
+                </Stack>
+              </LocalizationProvider>
+            
           </Col>
-          <Col md="auto">
-            <Button onClick={this.addReminder}>Remind me</Button>
+          <Col md="auto" xs="12" sm="12" >
+          <Stack > 
+            <Button className="mt-2 pt-3 pb-3 pl-4 pr-4" onClick={this.addReminder} variant="contained">Add Now</Button>
+           </Stack>
           </Col>
           </Row>
           </Card.Body>
@@ -58,42 +85,66 @@ export class App extends React.Component {
         {this.state.reminders.length===0?
             "No reminders"
             :
-            this.state.reminders.map((item)=>{
+            this.state.reminders.reverse().map((item)=>{
               return (
                 <Reminder key={item.id} title={item.title} dateTime={item.dateTime}></Reminder>
               )
             })
         }
-        
+
+         
+<ToastContainer
+       
+       autoClose={3000}
+       
+       />
       </div>
     );
 
     
   }
+  
   setTitle(val){
-    console.log(val);
+    // console.log(val);
     this.setState({title:val.target.value});
   }
   setDateTime(val){
-    console.log(val);
+    // console.log(val);
     this.setState({dateTime:val.target.value});
   }
 
   addReminder(){
-      const reminder={
-                    reminder_id:this.state.reminders.length+1,
-                    title:this.state.title!=null?this.state.title:"",
-                    dateTime:this.state.dateTime!=null?this.state.dateTime:""
-                  };
-      const reminders=this.state.reminders;
-      reminders.push(reminder);
-      
-      this.setState({reminders:reminders});
-      setReminders(this.state.reminders);
-      // this.state.title.value="";
-      // this.state.dateTime.value="";
+    if(this.state.title!==""){
+        const reminder={
+                      id:this.state.reminders.length+1,
+                      title:this.state.title,
+                      dateTime:this.state.dateTime,
+                      isCompleted:false
+                    };
+        
+        const reminders=this.state.reminders;
+        reminders.push(reminder);
+        
+        this.setState({reminders:reminders});
+        setReminders(this.state.reminders);
+    }
+    else{
+      this.showToast("Title is required","e");
+    }
+
   }
-  
+  showToast(msg,type){
+    if(type==="s"){
+     return toast.success(msg, {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }
+    if(type==="e"){
+      return toast.error(msg, {
+        position: toast.POSITION.TOP_CENTER
+      });
+    }
+  }
 }
 
 export default App;
