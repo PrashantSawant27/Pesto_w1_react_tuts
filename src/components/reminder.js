@@ -15,7 +15,7 @@ export default class Reminder extends React.Component {
                             </Col>
                             <Col className="text-left">
                                 <small>On {moment(this.props.dateTime).format("DD-MM-YYYY")}</small>
-                                <h3>{this.props.title}</h3>
+                                {this.props.isCompleted? <h3 className="strike">{this.props.title}</h3>:<h3>{this.props.title}</h3>}
                                 <p>At {moment(this.props.dateTime).format("HH:mm:ss A")}</p>
                             </Col>
                             

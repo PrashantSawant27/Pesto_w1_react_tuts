@@ -15,14 +15,20 @@ import TimePicker from '@material-ui/lab/TimePicker';
 import Stack from '@material-ui/core/Stack';
 import TextField from '@material-ui/core/TextField';
 import { toast,ToastContainer } from 'react-toastify';
+import moment from 'moment';
+import Notify from './components/Notify.js';
+
 export class App extends React.Component {
   
   constructor(props) {
     super(props);
+    this.interval=null;
     this.state={ reminders:[],title:"",dateTime:new Date(),openSnack:false};
     this.addReminder=this.addReminder.bind(this);
     this.setDateTime=this.setDateTime.bind(this);
     this.setTitle=this.setTitle.bind(this);
+    // this.setRemindersFromStorage=this.setRemindersFromStorage(this);
+    // this.checkRemindersTime=this.checkRemindersTime(this);
   }
   componentDidMount(){
     document.title = "Reminder App";
@@ -32,7 +38,66 @@ export class App extends React.Component {
   setRemindersFromStorage(){
     this.setState({reminders:getReminders()});
   }
+
+  checkRemindersTime(){
+    let me=this;
+    console.log("called");
+    
+    // let reminders=me.state.reminders.filter((ele)=>{ return moment(ele.dateTime).format("DD-MM-YYYY HH:mm:ss A")===moment(date).add(5, 'seconds').format("DD-MM-YYYY HH:mm:ss A") });
+    // if(reminders.length>0){
+    //   this.setState({interval:null});
+    //   clearInterval(this.state.interval);
+    // }
+    // if(this.state.interval!=null){
+      
+     
+      this.interval=
+          setInterval(function() {
+            // console.log(moment(new Date()).isSame(moment(new Date())));
+            
+            
+            let date=new Date();
+            let ori=me.state.reminders;
+            let reminders=me.state.reminders.filter((ele)=>{ 
+              return (moment(ele.dateTime).format("DD-MM-YYYY HH:mm:ss A")===moment(date).format("DD-MM-YYYY HH:mm:ss A") && ele.isCompleted!==true) 
+            });
+
+            if(reminders.length>0){
+              console.log(reminders.length);
+              let noti="";
+              reminders.forEach( ele => {
+                noti+="<br>-"+ele.title;
+                let obj=ori.find(c=> c.id===ele.id);
+                obj.isCompleted=true;
+
+              });
+
+              me.showToast("Reminder For: "+noti,"i");
+              
+              reminders=me.state.reminders.filter((ele)=>{ 
+                return (moment(ele.dateTime).format("DD-MM-YYYY HH:mm:ss A")===moment(date).format("DD-MM-YYYY HH:mm:ss A") && ele.isCompleted!==true) 
+              });
+              
+              me.setState({reminders:ori});
+              setReminders(ori);
+            }
+            else{
+              // console.log(date);
+              clearInterval(this.interval);
+            }
+
+            
+          },1000);
+    
+    
+  }
   render() {
+    // if(this.state.interval!=null){
+    //   this.setState({interval:null});
+    //   clearInterval(this.state.interval);
+    // }
+
+    this.checkRemindersTime();
     return (
       <div className="App">
         <header className="App-header">
@@ -87,16 +152,14 @@ export class App extends React.Component {
             :
             this.state.reminders.reverse().map((item)=>{
               return (
-                <Reminder key={item.id} title={item.title} dateTime={item.dateTime}></Reminder>
+                <Reminder key={item.id} isCompleted={item.isCompleted}  title={item.title} dateTime={item.dateTime}></Reminder>
               )
             })
         }
 
          
 <ToastContainer
-       
-       autoClose={3000}
-       
+       autoClose={5000}
        />
       </div>
     );
@@ -142,6 +205,12 @@ export class App extends React.Component {
     if(type==="e"){
       return toast.error(msg, {
         position: toast.POSITION.TOP_CENTER
+      });
+    }
+    if(type==="i"){
+      return toast.info(<Notify msg={msg} />, {
+        position: toast.POSITION.TOP_CENTER,
+        
       });
     }
   }
